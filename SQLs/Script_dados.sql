@@ -1,4 +1,5 @@
--- Script para preencher a tabela Dim_Tempo com os anos 2023 e 2024 (MySQL) -- Limpar dados existentes se necessário (opcional) -- DELETE FROM Dim_Tempo WHERE Ano IN (2023, 2024); 
+-- Script para preencher a tabela Dim_Tempo com os anos 2023 e 2024 (MySQL) 
+
  -- Função auxiliar para obter o último dia do mês 
 DELIMITER // 
 CREATE FUNCTION IF NOT EXISTS ultimo_dia_mes(data DATE)  
@@ -34,7 +35,7 @@ BEGIN
     -- Inicializar variáveis 
     SET data_atual = '2023-01-01'; 
     SET data_final = '2024-12-31'; 
-    SET id_tempo = 1; -- Iniciar com ID 1 (ajuste conforme necessário) 
+    SET id_tempo = 1; 
      
     -- Loop para gerar registros para cada dia 
     WHILE data_atual <= data_final DO 
@@ -105,7 +106,7 @@ ELSE '2º Semestre' END;
         -- Ano 
         SET ano = YEAR(data_atual); 
          
-        -- Estação do ano (para hemisfério sul) 
+        -- Estação do ano
         SET estacao = CASE  
             WHEN (MONTH(data_atual) = 12 AND DAY(data_atual) >= 21) OR 
 (MONTH(data_atual) IN (1, 2) OR (MONTH(data_atual) = 3 AND DAY(data_atual) < 21)) 
@@ -170,9 +171,9 @@ END //
 DELIMITER ; 
  -- Executar o procedimento 
 CALL preencher_dim_tempo(); 
- -- Remover a função e o procedimento após a execução (opcional) 
-DROP FUNCTION IF EXISTS ultimo_dia_mes; 
-DROP PROCEDURE IF EXISTS preencher_dim_tempo; 
+ 
+ -- DROP FUNCTION IF EXISTS ultimo_dia_mes; 
+ -- DROP PROCEDURE IF EXISTS preencher_dim_tempo; 
  -- Verificação (opcional) -- SELECT COUNT(*) AS Total_Dias FROM Dim_Tempo WHERE Ano IN (2023, 2024); 
  -- SELECT * FROM Dim_Tempo WHERE Ano IN (2023, 2024) ORDER BY Data; 
  
@@ -182,7 +183,7 @@ DROP PROCEDURE IF EXISTS preencher_dim_tempo;
    #--------------------------------------------------------------------------------------------------------
  
  
- -- Script para preencher a tabela Fato_Chamados com dados para 2023 e 2024 -- Criando procedimento para inserir dados aleatórios 
+ -- Script para preencher a tabela Fato_Chamados com dados para 2023 e 2024 
 DELIMITER // 
 CREATE PROCEDURE preencher_fato_chamados() 
 BEGIN 
@@ -207,10 +208,7 @@ BEGIN
     DECLARE data_chamado DATE; 
     DECLARE ano_chamado INT; 
      
-    -- Garantir que temos dados nas dimensões antes de prosseguir 
-    -- Inserindo dados mínimos nas tabelas de dimensão se necessário 
-     
-    -- 1. Dim_Categoria (se estiver vazia) 
+    -- 1. Dim_Categoria
     IF (SELECT COUNT(*) FROM Dim_Categoria) = 0 THEN 
         INSERT INTO Dim_Categoria (id_categoria, cod_categoria, descricao_categoria) 
 VALUES 
@@ -226,7 +224,7 @@ VALUES
         (10, 110, 'Segurança'); 
     END IF; 
      
-    -- 2. Dim_CanalAtendimento (se estiver vazia) 
+    -- 2. Dim_CanalAtendimento
     IF (SELECT COUNT(*) FROM Dim_CanalAtendimento) = 0 THEN 
         INSERT INTO Dim_CanalAtendimento (ID_Canal, Cod_Canal, descricao_canal) 
 VALUES 
@@ -237,7 +235,7 @@ VALUES
         (5, 'CHAT', 'Chat Online'); 
     END IF; 
      
-    -- 3. Dim_Satisfacao (se estiver vazia) 
+    -- 3. Dim_Satisfacao 
     IF (SELECT COUNT(*) FROM Dim_Satisfacao) = 0 THEN 
         INSERT INTO Dim_Satisfacao (ID_Satisfacao, Cod_Satisfacao, Nivel_Satisfacao) 
 VALUES 
@@ -248,7 +246,7 @@ VALUES
         (5, 5, 'Muito satisfeito'); 
     END IF; 
      
-    -- 4. Dim_Prioridade (se estiver vazia) 
+    -- 4. Dim_Prioridade 
     IF (SELECT COUNT(*) FROM Dim_Prioridade) = 0 THEN 
         INSERT INTO Dim_Prioridade (ID_Prioridade, Nivel_Prioridade, cod_prioridade) 
 VALUES 
@@ -258,7 +256,7 @@ VALUES
         (4, 'Crítica', 4); 
     END IF; 
      
-    -- 5. Dim_Status (se estiver vazia) 
+    -- 5. Dim_Status 
     IF (SELECT COUNT(*) FROM Dim_Status) = 0 THEN 
         INSERT INTO Dim_Status (ID_Status, cod_status, Descricao_Status) VALUES 
         (1, 1, 'Aberto'), 
@@ -269,7 +267,7 @@ VALUES
         (6, 6, 'Cancelado'); 
     END IF; 
      
-    -- 6. Dim_TipoServico (se estiver vazia) 
+    -- 6. Dim_TipoServico
     IF (SELECT COUNT(*) FROM Dim_TipoServico) = 0 THEN 
         INSERT INTO Dim_TipoServico (ID_Servico, cod_servico, descricao_servico) VALUES 
         (1, 101, 'Suporte técnico'), 
@@ -284,7 +282,7 @@ VALUES
         (10, 110, 'Acesso remoto'); 
     END IF; 
      
-    -- 7. Dim_Suporte (se estiver vazia) 
+    -- 7. Dim_Suporte
     IF (SELECT COUNT(*) FROM Dim_Suporte) = 0 THEN 
         INSERT INTO Dim_Suporte (id_suporte, cod_suporte, descricao_suporte) VALUES 
         (1, 1001, 'Equipe de Desktop'), 
@@ -294,7 +292,7 @@ VALUES
         (5, 1005, 'Equipe de Sistemas'); 
     END IF; 
      
-    -- 8. Dim_Funcionario (se estiver vazia) 
+    -- 8. Dim_Funcionario 
     IF (SELECT COUNT(*) FROM Dim_Funcionario) = 0 THEN 
         INSERT INTO Dim_Funcionario (ID_Funcionario, Nome, matricula, Departamento, 
 Cargo, Setor) VALUES 
@@ -310,7 +308,7 @@ Cargo, Setor) VALUES
         (10, 'Amanda Ribeiro', 'F1010', 'TI', 'Analista', 'Desenvolvimento'); 
     END IF; 
      
-    -- 9. Dim_Departamento (se estiver vazia) 
+    -- 9. Dim_Departamento 
     IF (SELECT COUNT(*) FROM Dim_Departamento) = 0 THEN 
         INSERT INTO Dim_Departamento (ID_Departamento, Nome_Departamento, Setor) 
 VALUES 
@@ -326,7 +324,7 @@ VALUES
         (10, 'Atendimento', 'Comercial'); 
     END IF; 
      
-    -- 10. Dim_Usuario (se estiver vazia) 
+    -- 10. Dim_Usuario  
     IF (SELECT COUNT(*) FROM Dim_Usuario) = 0 THEN 
         INSERT INTO Dim_Usuario (ID_Usuario, Nome_Usuario, Cargo) VALUES 
         (1, 'Roberto Gomes', 'Analista Financeiro'), 
@@ -348,21 +346,21 @@ VALUES
      
     -- Loop para inserir os registros 
     WHILE i <= total_registros DO 
-        -- Definir ano aleatoriamente (2023 ou 2024) mas garantindo pelo menos 40 de cada 
+        -- Definir ano aleatoriamente (2023 ou 2024) 
         IF i <= 50 THEN 
             SET ano_chamado = 2023; 
         ELSE 
             SET ano_chamado = 2024; 
         END IF; 
          
-        -- Buscar um ID_Tempo aleatório para o ano correspondente 
+        -- Buscar um ID_Tempo aleatório para o ano
         SELECT ID_Tempo INTO tempo_id  
         FROM Dim_Tempo  
         WHERE Ano = ano_chamado  
         ORDER BY RAND()  
         LIMIT 1; 
          
-        -- Selecionar valores aleatórios para as outras dimensões 
+        -- Selecionar valores aleatórios para 
         SET categoria_id = FLOOR(1 + RAND() * 10); 
         SET canal_id = FLOOR(1 + RAND() * 5); 
         SET satisfacao_id = FLOOR(1 + RAND() * 5); 
@@ -374,7 +372,6 @@ VALUES
         SET usuario_id = FLOOR(1 + RAND() * 15); 
         SET departamento_id = FLOOR(1 + RAND() * 10); 
          
-        -- Gerar tempos de atendimento baseados na prioridade 
         -- Quanto maior a prioridade, menor o tempo esperado 
         SET tempo_esperado = CASE prioridade_id 
             WHEN 1 THEN FLOOR(24 + RAND() * 48) -- Baixa: 24-72 horas 
@@ -387,7 +384,7 @@ VALUES
         SET tempo_aber_and = FLOOR(1 + RAND() * 4); -- 1-5 horas para começar a atender 
          
         -- Tempo total até fechamento depende do status 
-        IF status_id IN (4, 5) THEN -- Resolvido ou Fechado 
+        IF status_id IN (4, 5) THEN 
             SET tempo_and_fech = FLOOR(tempo_esperado * (0.6 + RAND() * 0.8)); -- 60%-140% do tempo esperado 
             SET tempo_aber_fech = tempo_aber_and + tempo_and_fech; 
         ELSE -- Outros status (ainda não fechados) 
@@ -451,9 +448,9 @@ END //
 DELIMITER ; 
  -- Executar o procedimento 
 CALL preencher_fato_chamados(); 
- -- Remover o procedimento após a execução 
-DROP PROCEDURE IF EXISTS preencher_fato_chamados; 
- -- Verificação (opcional) - Resumo dos chamados por ano 
+
+ -- DROP PROCEDURE IF EXISTS preencher_fato_chamados; 
+
 SELECT  
     dt.Ano, 
     COUNT(*) AS Total_Chamados, 
